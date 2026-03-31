@@ -1,0 +1,136 @@
+---
+author: "Vitor Thedoro Oliveira Viana"
+title: "Análise Experimental do Lançamento de Projéteis com Catapulta"
+bibliography: referencias.bib
+link-citations: true
+csl: associacao-brasileira-de-normas-tecnicas-ipea.csl
+subtitle: "<a href='https://bendeivide.github.io/courses/epaec/' target='_blank'>Estatística e Probabilidade</a> </br> <a href='https://bendeivide.github.io' target='_blank'>Prof. Ben Dêivide (DEFIM/CAP/UFSJ)</a>"
+include-before-body: header.html
+date: now
+date-format: "DD/MM/YYYY, HH:mm"
+lang: pt-BR
+format:
+  html:
+    toc: true
+    number-sections: true
+    theme: bootstrap
+    code-fold: true
+    code-tools: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## 📌 Introdução
+
+Experimentos físicos simples são excelentes ferramentas para compreender fenômenos reais por meio de dados. Neste trabalho, foi analisado o comportamento de lançamentos realizados com uma catapulta artesanal, buscando entender como pequenas variações no processo impactam a distância percorrida por um projétil.
+
+A proposta central foi observar a **variabilidade dos resultados experimentais**, destacando como fatores externos e humanos influenciam medições aparentemente simples.
+
+---
+
+## 🎯 Objetivos
+
+### Objetivo geral
+
+Avaliar a variabilidade das distâncias percorridas por uma bolinha lançada por uma catapulta em condições controladas.
+
+### Objetivos específicos
+
+- Realizar múltiplos lançamentos e registrar as distâncias  
+- Aplicar medidas de estatística descritiva  
+- Analisar a dispersão dos dados  
+- Identificar possíveis inconsistências experimentais  
+
+---
+
+## 📚 Fundamentação Teórica
+
+A análise estatística permite resumir e interpretar dados experimentais. Neste estudo, foram utilizadas as seguintes medidas:
+
+- **Média**: representa o valor central dos dados  
+- **Variância**: mede o grau de dispersão em relação à média  
+- **Desvio padrão**: indica o quanto os valores se afastam da média  
+- **Amostragem**: conjunto de dados coletados no experimento  
+
+A média é calculada por:
+
+$$
+\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i
+$$
+
+Essas métricas são fundamentais para avaliar a confiabilidade dos resultados obtidos.
+
+---
+
+## ⚙️ Metodologia
+
+::: {.callout-note}
+O experimento foi conduzido em ambiente não controlado, simulando condições reais de coleta.
+:::
+
+**Materiais utilizados:**
+
+- Catapulta de madeira  
+- Bolinha de papel  
+- Trena  
+- Superfície plana (mesa)  
+
+**Procedimento:**
+
+Foram realizados 40 lançamentos consecutivos mantendo uma configuração semelhante da catapulta. A cada lançamento, a distância percorrida pela bolinha foi medida com uma trena.
+
+Apesar da tentativa de padronização, pequenas variações na força aplicada e no posicionamento da catapulta foram inevitáveis.
+
+---
+
+## 🔍 Resultados e Discussão
+
+A análise dos dados coletados apresentou os seguintes resultados:
+
+- **Média:** 1,945 metros  
+- **Variância:** 0,644  
+- **Desvio padrão:** 0,254 metros  
+- **Amostra:** 40 lançamentos  
+
+Observa-se que os valores estão relativamente concentrados próximos da média, porém com uma dispersão moderada.
+
+Durante o experimento, foram identificados valores extremos:
+
+- **Mínimo:** 1,51 m  
+- **Máximo:** 2,80 m  
+
+Esses valores indicam a presença de variações significativas, provavelmente associadas a fatores como:
+
+- Variação na força aplicada  
+- Pequenas mudanças no ângulo de lançamento  
+- Erros de medição  
+- Influência do ambiente  
+
+Mesmo com essas variações, a maioria dos resultados permaneceu próxima da média, sugerindo um comportamento relativamente consistente.
+
+O desvio padrão obtido indica uma variabilidade perceptível, mas esperada para experimentos realizados fora de laboratório, onde o controle das condições é limitado.
+
+### 💬 Exemplo de como citar uma referência bibliográfica
+
+- Segundo @Rbasico2022  
+- Tudo é um objeto em R [@Rbasico2022]
+
+---
+
+## 📊 Análise de Dados
+
+```{r}
+distancia <- c(
+1.96,1.95,1.99,1.93,2.05,2.13,2.8,1.99,2.5,2.8,
+1.99,1.88,2.01,1.97,2.0,1.72,1.86,1.95,1.92,2.03,
+1.71,1.64,1.87,1.96,1.93,1.77,1.95,1.93,1.98,1.96,
+1.98,1.68,1.82,1.84,1.9,1.87,1.67,1.51,1.68,1.72
+)
+
+cat("Média:", mean(distancia), "\n")
+cat("Variância:", var(distancia), "\n")
+cat("Desvio padrão:", sd(distancia), "\n")
+cat("Amostra:", length(distancia), "\n")
+```
