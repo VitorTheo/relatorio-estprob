@@ -1,0 +1,187 @@
+---
+# Só mude aqui!!!!
+author: "Vitor Theodoro Oliveria Viana"
+title: "Relatório de Aula Prática 04 - Distribuições de Probabilidade"
+bibliography: referencias.bib
+# A partir daqui nao faca alteracoes!!!!!
+link-citations: true
+csl: associacao-brasileira-de-normas-tecnicas-ipea.csl
+subtitle: "<a href='https://bendeivide.github.io/courses/epaec/' target='_blank'>Estatística e Probabilidade</a>"
+include-before-body: header.html
+date: now
+date-format: "DD/MM/YYYY, HH:mm"
+lang: pt-BR
+format:
+  html:
+    toc: true
+    number-sections: true
+    theme: bootstrap
+    code-fold: true
+    code-tools: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## 📌 Introdução
+
+As distribuições de probabilidade são fundamentais para modelar fenômenos aleatórios. Neste relatório, são analisadas distribuições discretas e contínuas, com aplicações práticas e cálculos analíticos utilizando o R e o pacote `leem`.
+
+---
+
+## 🎯 Objetivos
+
+- Estudar distribuições Binomial, Poisson e Normal  
+- Aplicar cálculos de probabilidade  
+- Utilizar o pacote `leem`  
+- Comparar variáveis discretas e contínuas  
+
+---
+
+# 📚 Fundamentação Teórica
+
+## 🔹 Tipos de Variáveis Aleatórias
+
+- **Discretas**: Assumem valores que podem ser contados um a um (finitos ou infinitos                             enumeráveis). Geralmente resultam de processos de contagem e assumem números                     inteiros.
+
+- **Contínuas**: Assumem qualquer valor dentro de um intervalo ou série de intervalos nos números                  reais. Geralmente resultam de processos de medição.  
+
+---
+
+# 📊 Distribuição Binomial (Discreta)
+
+Modelo de sucessos em experimentos repetidos.
+
+```{r}
+dbinom(3, size=10, prob=0.5)
+
+
+```
+
+# 📊 Distribuição de Poisson (Discreta)
+
+Eventos raros em intervalo fixo.
+
+```{r}
+dpois(2, lambda=3)
+
+# Número de falhas por hora em rede.
+
+
+dpois(5, lambda=4)
+
+
+
+```
+
+# 📊 Distribuição Normal (Contínua)
+
+Distribuição simétrica em forma de sino.
+
+```{r}
+
+pnorm(100, mean=90, sd=10)
+
+# Tempo de resposta de um sistema.
+
+pnorm(110, mean=100, sd=15)
+
+```
+
+# 📊 Uso do pacote LEEM
+
+```{r}
+library(leem)
+
+set.seed(10)
+
+# 1. Gera os dados normais
+dados <- rnorm(50, 100, 3)
+
+# 2. Converte os dados para a classe exigida pelo pacote leem
+dados_leem <- new_leem(dados, variable = 2)
+
+# 3. Cria a tabela de frequências usando o objeto convertido
+tab <- tabfreq(dados_leem)
+
+# 4. Exibe o resultado
+tab
+
+
+# Ajuste de classes com k
+
+# 1. Transforma os dados brutos em um objeto da classe 'leem'
+dados_leem <- new_leem(dados, variable = 2)
+
+# 2. Agora sim, calcula a tabela especificando o número de classes (k = 6)
+tab2 <- tabfreq(dados_leem, k = 6)
+
+# 3. Exibe o resultado
+tab2
+
+```
+
+# 📊 Aprofundamento
+
+🔹 Discretas
+
+# Binomial
+```{r}
+ 
+
+rbinom(50, 10, 0.5)
+
+```
+# Poisson
+
+```{r}
+
+rpois(50, 3)
+```
+
+# Contínuas
+
+# Normal
+
+```{r}
+
+rnorm(50, 100, 10)
+```
+
+# Uniforme
+
+```{r}
+runif(50, 0, 1)
+
+```
+
+# Visualização
+
+# Histograma
+```{r}
+hist(dados, col="lightblue")
+```
+
+# Boxplot
+```{r}
+boxplot(dados)
+```
+
+# Resultados e Discussões
+
+- As distribuições discretas apresentaram valores inteiros e comportamento baseado em contagem, enquanto as contínuas mostraram maior variabilidade.
+
+- O pacote leem facilitou a construção de tabelas de frequência, permitindo análise detalhada dos dados.
+
+# Conclusão
+
+- O estudo das distribuições permitiu compreender diferentes comportamentos de variáveis aleatórias.
+
+- A utilização do R e do pacote leem tornou o processo mais eficiente e didático.
+
+# Referências
+
+- Vídeo aulas do professor da disciplina de Estatística e Probabilidade, Ben Dêivide.
+
+- Canal: [https://www.youtube.com/@bendeivide/videos]
