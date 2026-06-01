@@ -1,12 +1,12 @@
 ---
 # Só mude aqui!!!!
-author: "Nome do Aluno"
-title: "Relatório de Aula Prática 03"
+author: "Vitor Theodoro Oliveria Viana"
+title: "Relatório de Aula Prática 03 - Experimento da Catapulta"
 bibliography: referencias.bib
 # A partir daqui nao faca alteracoes!!!!!
 link-citations: true
 csl: associacao-brasileira-de-normas-tecnicas-ipea.csl
-subtitle: "<a href='https://bendeivide.github.io/courses/epaec/' target='_blank'>Estatística e Probabilidade</a> </br> <a href='https://bendeivide.github.io' target='_blank'>Prof. Ben Dêivide (DEFIM/CAP/UFSJ)</a>"
+subtitle: "<a href='https://bendeivide.github.io/courses/epaec/' target='_blank'>Estatística e Probabilidade</a>"
 include-before-body: header.html
 date: now
 date-format: "DD/MM/YYYY, HH:mm"
@@ -16,7 +16,6 @@ format:
     toc: true
     number-sections: true
     theme: bootstrap
-    #css: styles.css
     code-fold: true
     code-tools: true
 execute:
@@ -25,102 +24,90 @@ execute:
   message: false
 ---
 
-
 ## 📌 Introdução
 
-Descreva o contexto da prática e sua importância.
+O experimento da catapulta foi realizado com o objetivo de analisar a variabilidade das distâncias de lançamento de uma bolinha, considerando diferentes fontes de variação.
 
-> Exemplo: análise da variabilidade em experimentos físicos utilizando uma catapulta.
+Foram realizadas 40 observações, permitindo a aplicação de conceitos de estatística descritiva e análise gráfica.
 
-
+---
 
 ## 🎯 Objetivos
 
 ### Objetivo geral
 
-Descrever o objetivo principal da prática.
+Analisar estatisticamente os dados obtidos no experimento da catapulta.
 
 ### Objetivos específicos
 
-- Coletar dados experimentais  
-- Aplicar estatística descritiva  
+- Calcular medidas de posição e dispersão  
 - Construir gráficos  
-- Interpretar resultados  
+- Analisar distribuição dos dados  
+- Avaliar assimetria e curtose  
+- Comparar dados agrupados e não agrupados  
 
 ---
 
-## 📚  Fundamentação Teórica
-
-Apresente os conceitos principais:
-
-- Média
-- Variância
-- Desvio padrão
-- Amostragem
-
-$$
-\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i
-$$
-
----
-
-## ⚙️ Metodologia
-
-::: {.callout-note}
-Descreva como o experimento foi realizado.
-:::
-
-- Materiais utilizados  
-- Procedimento  
-- Número de repetições  
-
----
-
-## 🔍 Resultados e Discussão
-
-Apresente e interprete os resultados obtidos a partir dos dados coletados.
-
-- Descreva os principais resultados numéricos (média, variabilidade, etc.).
-- Comente o comportamento dos dados observados nos gráficos.
-- Indique se há presença de valores discrepantes (outliers).
-- Avalie se os dados apresentam simetria ou tendência.
-
-Em seguida, discuta os resultados à luz dos conceitos teóricos:
-
-- Os resultados estão de acordo com o esperado?
-- Há grande variabilidade? O que isso significa no contexto do experimento?
-- Quais fatores podem ter influenciado os resultados?
-- Existem possíveis fontes de erro experimental?
-
-Procure não apenas descrever, mas **interpretar os dados**.
-
-### 💬 Exemplo de como citar uma referência bibliográfica
-
-Depois de inserido as informaçõe no arquivo **referencias.bib**, use:
-
-- Segundo @Rbasico2022
-- Tudo é um objeto em R [@Rbasico2022]
-
-### 📊  Análise de Dados
+## 📊 Dados coletados
 
 ```{r}
-distancia <- c(10.2, 9.8, 10.5, 10.1, 9.9, 10.3)
-distancia
+distancias <- c(
+96, 87, 89, 85, 43.5, 118.5, 115, 91, 79, 89,
+73, 85, 119, 92.5, 102, 90, 88, 100, 91, 86.5,
+70, 91, 80, 78, 96.5, 68, 25, 79, 107, 67,
+52.5, 81, 109, 83, 74, 84, 89, 82.5, 81, 70
+)
+
+mean(distancias)
+median(distancias)
+sd(distancias)
+var(distancias)
+summary(distancias)
+
+# Histograma
+
+hist(distancias, col="lightblue", main="Histograma das distâncias")
+
+# Boxplot
+
+boxplot(distancias, col="orange", main="Boxplot das distâncias")
+
+# Análise com agrupamento
+
+classes <- cut(distancias, breaks=6)
+table(classes)
+
+# Assimetria
+
+
+library(e1071)
+
+skewness(distancias)
+kurtosis(distancias)
+
+
+
+
 ```
 
-## 🧠 Considerações finais
+## Resultados e Discussões
 
-Apresente uma síntese dos principais pontos observados no experimento.
+- Os resultados mostram que os dados apresentam variação significativa entre os lançamentos.
 
-- Retome o objetivo da prática e indique se ele foi alcançado.
-- Destaque os principais aprendizados obtidos.
-- Comente brevemente sobre a qualidade dos dados coletados.
-- Sugira possíveis melhorias no procedimento experimental.
+- O histograma permite observar a distribuição dos dados, enquanto o boxplot evidencia possíveis outliers.
 
-Evite repetir apenas os resultados; foque nas **conclusões e reflexões** sobre a prática realizada.
+- A análise de assimetria indica se os dados são inclinados à direita ou esquerda, enquanto a curtose mostra o grau de concentração dos dados.
 
-## Aprenda Quarto
+- A comparação entre dados agrupados e não agrupados evidencia perda de precisão quando os dados são agrupados.
 
-Acesse [Quarto](https://quarto.org/).
+## Possíveis erros experimentais
 
-## 📖 Referências
+- Variação na força aplicada
+- Diferença na posição da catapulta
+- Influência do ambiente (vento, superfície)
+
+## Conclusão
+
+- O experimento permitiu compreender a variabilidade dos dados e a importância das ferramentas estatísticas.
+
+- As medidas descritivas e os gráficos foram fundamentais para interpretação dos resultados.

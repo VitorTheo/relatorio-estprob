@@ -1,7 +1,7 @@
 ---
 # Só mude aqui!!!!
-author: "Nome do Aluno"
-title: "Relatório de Aula Prática 02"
+author: "Vitor Theodoro Oliveira Viana"
+title: "Relatório de Aula Prática 02 - Introdução ao R e RStudio"
 bibliography: referencias.bib
 # A partir daqui nao faca alteracoes!!!!!
 link-citations: true
@@ -16,7 +16,6 @@ format:
     toc: true
     number-sections: true
     theme: bootstrap
-    #css: styles.css
     code-fold: true
     code-tools: true
 execute:
@@ -25,102 +24,158 @@ execute:
   message: false
 ---
 
+# Introdução
 
-## 📌 Introdução
+A linguagem R é um ambiente de programação amplamente utilizado para análise estatística e manipulação de dados. Sua importância está relacionada à capacidade de trabalhar com diferentes estruturas de dados e realizar cálculos de forma eficiente.
 
-Descreva o contexto da prática e sua importância.
-
-> Exemplo: análise da variabilidade em experimentos físicos utilizando uma catapulta.
-
-
-
-## 🎯 Objetivos
-
-### Objetivo geral
-
-Descrever o objetivo principal da prática.
-
-### Objetivos específicos
-
-- Coletar dados experimentais  
-- Aplicar estatística descritiva  
-- Construir gráficos  
-- Interpretar resultados  
+Este relatório tem como objetivo apresentar os conceitos iniciais da linguagem R e do ambiente RStudio, destacando sua estrutura, funcionamento e aplicação prática.
 
 ---
 
-## 📚  Fundamentação Teórica
+## Objetivos
 
-Apresente os conceitos principais:
+Apresentar os conceitos básicos da linguagem R e sua utilização no ambiente RStudio.
 
-- Média
-- Variância
-- Desvio padrão
-- Amostragem
+## Objetivos específicos
 
-$$
-\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i
-$$
-
----
-
-## ⚙️ Metodologia
-
-::: {.callout-note}
-Descreva como o experimento foi realizado.
-:::
-
-- Materiais utilizados  
-- Procedimento  
-- Número de repetições  
+- Compreender o conceito de objetos no R  
+- Explorar estruturas como vetores e dataframes  
+- Entender operadores de atribuição e comparação  
+- Conhecer o ambiente global  
+- Trabalhar com scripts e arquivos do R  
 
 ---
 
-## 🔍 Resultados e Discussão
+# Fundamentos da Linguagem R
 
-Apresente e interprete os resultados obtidos a partir dos dados coletados.
+A linguagem R é baseada em três princípios fundamentais:
 
-- Descreva os principais resultados numéricos (média, variabilidade, etc.).
-- Comente o comportamento dos dados observados nos gráficos.
-- Indique se há presença de valores discrepantes (outliers).
-- Avalie se os dados apresentam simetria ou tendência.
+- **Objeto**: tudo no R é armazenado como objeto  
+- **Função**: todas as operações são feitas por funções  
+- **Interface**: integração com linguagens como C e Fortran  
 
-Em seguida, discuta os resultados à luz dos conceitos teóricos:
+---
 
-- Os resultados estão de acordo com o esperado?
-- Há grande variabilidade? O que isso significa no contexto do experimento?
-- Quais fatores podem ter influenciado os resultados?
-- Existem possíveis fontes de erro experimental?
+# Estruturas de dados
 
-Procure não apenas descrever, mas **interpretar os dados**.
+## Vetor
 
-### 💬 Exemplo de como citar uma referência bibliográfica
-
-Depois de inserido as informaçõe no arquivo **referencias.bib**, use:
-
-- Segundo @Rbasico2022
-- Tudo é um objeto em R [@Rbasico2022]
-
-### 📊  Análise de Dados
+Os vetores são a estrutura mais básica do R e armazenam dados do mesmo tipo.
 
 ```{r}
-distancia <- c(10.2, 9.8, 10.5, 10.1, 9.9, 10.3)
-distancia
+
+vetor <- c(1, 2, 3, 4, 5)
+
+vetor <- 1:10
+
+vetor[]
 ```
 
-## 🧠 Considerações finais
 
-Apresente uma síntese dos principais pontos observados no experimento.
+## DataFrame 
 
-- Retome o objetivo da prática e indique se ele foi alcançado.
-- Destaque os principais aprendizados obtidos.
-- Comente brevemente sobre a qualidade dos dados coletados.
-- Sugira possíveis melhorias no procedimento experimental.
+```{r}
 
-Evite repetir apenas os resultados; foque nas **conclusões e reflexões** sobre a prática realizada.
+lista <- list(
+  nome = "Vitor Theodoro",
+  idade = 29,
+  curso = "Engenharia de Telecomunicações"
+)
 
-## Aprenda Quarto
 
-Acesse [Quarto](https://quarto.org/).
+lista $ nome
+lista $ curso
+lista $ idade
 
-## 📖 Referências
+```
+
+## Operadores
+
+```{r}
+# <- atribuição
+
+x <- 10
+
+# x == 10 comparação
+
+x == 10
+
+
+```
+
+## Arquivos do R
+
+ Arquivos do R
+ 
+- .RData → salva objetos
+
+- .Rhistory → salva comandos
+
+## Metodologia
+
+- Uso do RStudio
+- Execução de comandos
+- Criação de objetos
+- Testes de funções
+
+
+## Funções
+
+```{r}
+numeros <- c(2, 4, 6, 8)
+
+mean(numeros)
+sum(numeros)
+
+```
+
+# 📊 Visualização de Dados
+
+A visualização de dados é uma etapa importante na análise estatística, pois permite interpretar padrões, tendências e comportamentos dos dados de forma mais intuitiva.
+
+## Gráfico simples com plot()
+
+```{r}
+# Gráfico básico
+plot(1:10)
+
+
+# Criando vetor de exemplo
+idades <- c(29, 30, 28, 35, 40)
+
+plot(idades, type = "b",
+     main = "Idades",
+     xlab = "Índice",
+     ylab = "Idade")
+
+
+# Histograma
+
+hist(idades,
+     main = "Distribuição das idades",
+     col = "lightblue")
+```
+
+## Resultados e Discussões
+
+- Durante a prática, foi possível observar que o R apresenta grande eficiência na manipulação de dados e execução de cálculos estatísticos.
+
+- A utilização de vetores e dataframes facilita a organização das informações, enquanto as funções prontas permitem rapidez nas análises.
+
+- Além disso, o ambiente RStudio contribui para melhor visualização e controle dos objetos criados.
+
+## Conclusão
+
+- A linguagem R demonstrou ser uma ferramenta poderosa para análise de dados, apresentando uma estrutura baseada em objetos e funções.
+
+- Os conceitos abordados neste relatório, como vetores, dataframes e operadores, são essenciais para o desenvolvimento de análises mais avançadas.
+
+- Os objetivos propostos foram alcançados, permitindo uma compreensão inicial sólida da linguagem e de sua aplicação prática.
+
+## Referências
+
+Referências
+
+- Vídeo aulas do professor da disciplina de Estatística e Probabilidade, Ben Dêivide.
+
+- Canal: [https://www.youtube.com/@bendeivide/videos]
