@@ -1,0 +1,181 @@
+---
+# Só mude aqui!!!!
+author: "Vitor Theodoro Oliveira Viana"
+title: "Relatório de Aula Prática 02 - Introdução ao R e RStudio"
+bibliography: referencias.bib
+# A partir daqui nao faca alteracoes!!!!!
+link-citations: true
+csl: associacao-brasileira-de-normas-tecnicas-ipea.csl
+subtitle: "<a href='https://bendeivide.github.io/courses/epaec/' target='_blank'>Estatística e Probabilidade</a> </br> <a href='https://bendeivide.github.io' target='_blank'>Prof. Ben Dêivide (DEFIM/CAP/UFSJ)</a>"
+include-before-body: header.html
+date: now
+date-format: "DD/MM/YYYY, HH:mm"
+lang: pt-BR
+format:
+  html:
+    toc: true
+    number-sections: true
+    theme: bootstrap
+    code-fold: true
+    code-tools: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# Introdução
+
+A linguagem R é um ambiente de programação amplamente utilizado para análise estatística e manipulação de dados. Sua importância está relacionada à capacidade de trabalhar com diferentes estruturas de dados e realizar cálculos de forma eficiente.
+
+Este relatório tem como objetivo apresentar os conceitos iniciais da linguagem R e do ambiente RStudio, destacando sua estrutura, funcionamento e aplicação prática.
+
+---
+
+## Objetivos
+
+Apresentar os conceitos básicos da linguagem R e sua utilização no ambiente RStudio.
+
+## Objetivos específicos
+
+- Compreender o conceito de objetos no R  
+- Explorar estruturas como vetores e dataframes  
+- Entender operadores de atribuição e comparação  
+- Conhecer o ambiente global  
+- Trabalhar com scripts e arquivos do R  
+
+---
+
+# Fundamentos da Linguagem R
+
+A linguagem R é baseada em três princípios fundamentais:
+
+- **Objeto**: tudo no R é armazenado como objeto  
+- **Função**: todas as operações são feitas por funções  
+- **Interface**: integração com linguagens como C e Fortran  
+
+---
+
+# Estruturas de dados
+
+## Vetor
+
+Os vetores são a estrutura mais básica do R e armazenam dados do mesmo tipo.
+
+```{r}
+
+vetor <- c(1, 2, 3, 4, 5)
+
+vetor <- 1:10
+
+vetor[]
+```
+
+
+## DataFrame 
+
+```{r}
+
+lista <- list(
+  nome = "Vitor Theodoro",
+  idade = 29,
+  curso = "Engenharia de Telecomunicações"
+)
+
+
+lista $ nome
+lista $ curso
+lista $ idade
+
+```
+
+## Operadores
+
+```{r}
+# <- atribuição
+
+x <- 10
+
+# x == 10 comparação
+
+x == 10
+
+
+```
+
+## Arquivos do R
+
+ Arquivos do R
+ 
+- .RData → salva objetos
+
+- .Rhistory → salva comandos
+
+## Metodologia
+
+- Uso do RStudio
+- Execução de comandos
+- Criação de objetos
+- Testes de funções
+
+
+## Funções
+
+```{r}
+numeros <- c(2, 4, 6, 8)
+
+mean(numeros)
+sum(numeros)
+
+```
+
+# 📊 Visualização de Dados
+
+A visualização de dados é uma etapa importante na análise estatística, pois permite interpretar padrões, tendências e comportamentos dos dados de forma mais intuitiva.
+
+## Gráfico simples com plot()
+
+```{r}
+# Gráfico básico
+plot(1:10)
+
+
+# Criando vetor de exemplo
+idades <- c(29, 30, 28, 35, 40)
+
+plot(idades, type = "b",
+     main = "Idades",
+     xlab = "Índice",
+     ylab = "Idade")
+
+
+# Histograma
+
+hist(idades,
+     main = "Distribuição das idades",
+     col = "lightblue")
+```
+
+## Resultados e Discussões
+
+- Durante a prática, foi possível observar que o R apresenta grande eficiência na manipulação de dados e execução de cálculos estatísticos.
+
+- A utilização de vetores e dataframes facilita a organização das informações, enquanto as funções prontas permitem rapidez nas análises.
+
+- Além disso, o ambiente RStudio contribui para melhor visualização e controle dos objetos criados.
+
+## Conclusão
+
+- A linguagem R demonstrou ser uma ferramenta poderosa para análise de dados, apresentando uma estrutura baseada em objetos e funções.
+
+- Os conceitos abordados neste relatório, como vetores, dataframes e operadores, são essenciais para o desenvolvimento de análises mais avançadas.
+
+- Os objetivos propostos foram alcançados, permitindo uma compreensão inicial sólida da linguagem e de sua aplicação prática.
+
+## Referências
+
+Referências
+
+- Vídeo aulas do professor da disciplina de Estatística e Probabilidade, Ben Dêivide.
+
+- Canal: [https://www.youtube.com/@bendeivide/videos]
