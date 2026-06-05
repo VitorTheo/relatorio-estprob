@@ -1,6 +1,6 @@
 ---
 # Só mude aqui!!!!
-author: "Seu Nome"
+author: "Vitor Theodoro Oliveira Viana"
 title: "Relatório de Aula Prática 07 - Estimadores Intervalares"
 bibliography: referencias.bib
 # A partir daqui nao faca alteracoes!!!!!
