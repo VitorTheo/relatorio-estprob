@@ -1,0 +1,214 @@
+---
+# Só mude aqui!!!!
+author: "Vitor Theodoro Oliveira Viana"
+title: "Relatório de Aula Prática 08 - Comparação entre Duas Populações"
+bibliography: referencias.bib
+# A partir daqui nao faca alteracoes!!!!!
+link-citations: true
+csl: associacao-brasileira-de-normas-tecnicas-ipea.csl
+subtitle: "Estatística e Probabilidade"
+include-before-body: header.html
+date: now
+date-format: "DD/MM/YYYY, HH:mm"
+lang: pt-BR
+format:
+  html:
+    toc: true
+    number-sections: true
+    theme: bootstrap
+    code-fold: true
+    code-tools: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## 📌 Introdução
+
+Um dos problemas centrais da inferência estatística é comparar duas populações a partir de amostras coletadas em condições experimentais distintas, a fim de verificar se existe diferença significativa entre suas médias. Neste relatório, essa comparação é aplicada ao experimento da catapulta desenvolvido na disciplina de Engenharia de Telecomunicações, no qual duas equipes (Grupo 1 e Grupo 2) utilizaram combinações de níveis de tensão diferentes para arremessar uma bolinha, registrando a distância alcançada.
+
+Ambos os grupos utilizaram as mesmas combinações de eletrodos $O^-$, $A^+$ e $A^-$, mas diferiram no nível do eletrodo $B^+$: o Grupo 1 empregou o Nível V, enquanto o Grupo 2 empregou o Nível VII. O objetivo é testar estatisticamente se essa diferença de nível produz, em média, distâncias diferentes.
+
+## 🎯 Objetivos
+
+- Deduzir e aplicar testes de hipóteses/intervalos de confiança para comparação de duas médias populacionais
+- Verificar os pressupostos de normalidade e homogeneidade de variâncias
+- Aplicar os testes em R utilizando os dados reais do experimento da catapulta
+- Interpretar os resultados no contexto do experimento e responder às perguntas do roteiro
+
+# 📚 Fundamentação Teórica
+
+## 🔹 Hipóteses do teste
+
+Sendo $\mu_1$ e $\mu_2$ as médias populacionais das distâncias arremessadas pelo Grupo 1 e Grupo 2, respectivamente, o teste de interesse é:
+
+$$
+H_0: \mu_1 = \mu_2 \qquad \text{vs} \qquad H_1: \mu_1 \neq \mu_2
+$$
+
+## 🔹 Verificação de pressupostos
+
+Antes de comparar as médias, é necessário verificar:
+
+- **Normalidade** dos dados em cada grupo (teste de Shapiro-Wilk)
+- **Homogeneidade das variâncias** entre os grupos (teste F, `var.test`)
+
+## 🔹 Diferença entre médias (homocedástico)
+
+Quando as variâncias podem ser consideradas iguais ($\sigma_1^2 = \sigma_2^2$):
+
+$$
+(\bar{x}_1 - \bar{x}_2) \pm t_{\alpha/2, n_1+n_2-2} \cdot S_p \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}
+$$
+
+em que $S_p$ é o desvio-padrão combinado (*pooled*).
+
+## 🔹 Diferença entre médias (heterocedástico)
+
+Quando as variâncias são consideradas diferentes, usa-se a correção de Welch:
+
+$$
+(\bar{x}_1 - \bar{x}_2) \pm t \cdot \sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}
+$$
+
+## 🔹 Razão entre variâncias
+
+O teste F compara as variâncias amostrais das duas populações e orienta qual versão do teste t (homo ou heterocedástica) deve ser utilizada:
+
+$$
+F = \frac{s_1^2}{s_2^2} \sim F_{n_1-1,\,n_2-1}
+$$
+
+# 🔗 Relação com Relatório 07
+
+No Relatório 07 foram construídos intervalos de confiança para um único parâmetro (média, variância e proporção). Neste relatório, o mesmo raciocínio é estendido para a comparação de **dois** parâmetros populacionais, permitindo decidir, com base em dados amostrais, se duas configurações experimentais diferentes produzem resultados médios distintos.
+
+# 🧪 Descrição do Experimento
+
+- **Curso:** Engenharia de Telecomunicações
+- **Variável resposta:** Distância da bolinha arremessada pela catapulta (cm)
+- **Comprimento da meta:** 62,2 cm
+- **Amostra:** $n_1 = 15$ (Grupo 1) e $n_2 = 15$ (Grupo 2)
+- **Data de coleta:** 22/06/2026, das 16h às 17h
+- **Combinações:**
+  - Grupo 1: $O^-$ (Nível III), $A^+$ (Nível III), $A^-$ (Nível IV), $B^+$ (Nível V)
+  - Grupo 2: $O^-$ (Nível III), $A^+$ (Nível III), $A^-$ (Nível IV), $B^+$ (Nível VII)
+- **Hipótese a ser testada:** $H_0: \mu_1 = \mu_2$
+
+# ⚙️ Simulação/Análise no R
+
+## Entrada dos dados
+
+```{r}
+grupo1 <- c(265, 262.5, 262, 240.5, 249, 249, 254.8, 231, 241.5,
+            248.5, 248.7, 238, 258, 257.5, 254.5)
+
+grupo2 <- c(219, 222, 237, 222, 225.5, 232, 231, 224.5, 230.5,
+            205, 231.5, 233.5, 235, 231.5, 229)
+
+n1 <- length(grupo1)
+n2 <- length(grupo2)
+
+c(n1, n2)
+```
+
+## Análise exploratória
+
+```{r}
+resumo <- data.frame(
+  Grupo = c("Grupo 1", "Grupo 2"),
+  n = c(n1, n2),
+  Media = c(mean(grupo1), mean(grupo2)),
+  DesvioPadrao = c(sd(grupo1), sd(grupo2)),
+  Minimo = c(min(grupo1), min(grupo2)),
+  Maximo = c(max(grupo1), max(grupo2))
+)
+resumo
+```
+
+```{r}
+boxplot(grupo1, grupo2,
+        names = c("Grupo 1 (Nível V)", "Grupo 2 (Nível VII)"),
+        col = c("#69b3a2", "#f4a261"),
+        ylab = "Distância (cm)",
+        main = "Distância arremessada pela catapulta")
+abline(h = 62.2, col = "red", lty = 2)
+legend("bottomright", legend = "Comprimento da meta (62,2 cm)",
+       col = "red", lty = 2, bty = "n", cex = 0.8)
+```
+
+## Teste de normalidade
+
+```{r}
+shapiro.test(grupo1)
+shapiro.test(grupo2)
+```
+
+## Teste de homogeneidade de variâncias
+
+```{r}
+teste_var <- var.test(grupo1, grupo2)
+teste_var
+```
+
+## Teste t para comparação das médias
+
+Com base no resultado do teste F acima, escolhe-se a versão adequada do teste t (`var.equal = TRUE` se as variâncias forem homogêneas; `var.equal = FALSE`, caso contrário):
+
+```{r}
+# Teste t assumindo variâncias iguais (homocedástico)
+t_homo <- t.test(grupo1, grupo2, var.equal = TRUE)
+t_homo
+```
+
+```{r}
+# Teste t de Welch, assumindo variâncias diferentes (heterocedástico)
+t_hetero <- t.test(grupo1, grupo2, var.equal = FALSE)
+t_hetero
+```
+
+## Intervalo de confiança para a diferença de médias
+
+```{r}
+# Intervalo de confiança de 95% para (mu1 - mu2), conforme o teste escolhido
+t_hetero$conf.int
+```
+
+# 📊 Resultados e Discussões
+
+Nesta seção são respondidas as perguntas propostas no roteiro da aula prática.
+
+**1. Quais as hipóteses complementares?**
+
+$$
+H_0: \mu_1 = \mu_2 \qquad \text{(as médias das distâncias dos dois grupos são iguais)}
+$$
+$$
+H_1: \mu_1 \neq \mu_2 \qquad \text{(as médias das distâncias dos dois grupos são diferentes)}
+$$
+
+**2. Qual o nível de significância?**
+
+Adotou-se o nível de significância $\alpha = 0,05$ (5%), padrão usual em experimentos desse tipo, o que corresponde a um nível de confiança de 95% para os intervalos construídos.
+
+**3. Entre as combinações estudadas, qual proporciona maior distância arremessada pela bolinha?**
+
+Com base nas estatísticas descritivas, a combinação do **Grupo 1** ($B^+$ Nível V) apresentou média amostral de aproximadamente `r round(mean(grupo1),2)` cm, superior à média do **Grupo 2** ($B^+$ Nível VII), de aproximadamente `r round(mean(grupo2),2)` cm. O teste t (bem como o intervalo de confiança para a diferença de médias, que não contém o zero) indica que essa diferença é estatisticamente significativa ao nível de 5%, permitindo rejeitar $H_0$. Conclui-se que a combinação do Grupo 1 proporcionou, em média, maior distância arremessada.
+
+**4. Quais melhorias poderiam ser realizadas no experimento?**
+
+- Aumentar o tamanho amostral ($n_1$ e $n_2$) para reduzir a variabilidade das estimativas
+- Padronizar melhor as condições ambientais (superfície, ausência de vento, posicionamento da catapulta)
+- Utilizar um sistema de medição mais preciso (ex.: sensores) em vez de medição manual com trena
+- Repetir o experimento em diferentes dias/horários para verificar a robustez dos resultados
+- Testar mais níveis intermediários do eletrodo $B^+$ para mapear melhor a relação entre nível e distância percorrida
+
+# ✅ Conclusão
+
+A comparação entre as duas populações, realizada por meio de testes de hipóteses e intervalos de confiança para a diferença de médias, mostrou-se uma ferramenta eficaz para avaliar o efeito da alteração no nível do eletrodo $B^+$ sobre a distância arremessada pela catapulta. Os resultados indicam uma diferença estatisticamente significativa entre as médias dos dois grupos, evidenciando que a escolha da configuração experimental impacta diretamente o desempenho do sistema. Tais estimadores intervalares e testes de comparação são fundamentais em contextos de engenharia, permitindo decisões mais robustas do que a simples comparação de estimativas pontuais.
+
+# Referências
+
+- Vídeo aulas do professor da disciplina de Estatística e Probabilidade, Ben Dêivide.
+- Canal: [https://www.youtube.com/@bendeivide/videos]

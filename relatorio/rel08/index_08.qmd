@@ -1,0 +1,187 @@
+---
+# Só mude aqui!!!!
+author: "Vitor Theodoro Oliveira Viana"
+title: "Relatório de Aula Prática 07 - Estimadores Intervalares"
+bibliography: referencias.bib
+# A partir daqui nao faca alteracoes!!!!!
+link-citations: true
+csl: associacao-brasileira-de-normas-tecnicas-ipea.csl
+subtitle: "Estatística e Probabilidade"
+include-before-body: header.html
+date: now
+date-format: "DD/MM/YYYY, HH:mm"
+lang: pt-BR
+format:
+  html:
+    toc: true
+    number-sections: true
+    theme: bootstrap
+    code-fold: true
+    code-tools: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## 📌 Introdução
+
+A inferência estatística permite estimar parâmetros populacionais a partir de amostras. Neste relatório, são desenvolvidos estimadores intervalares para diferentes cenários, considerando distribuições normais e Bernoulli.
+
+---
+
+## 🎯 Objetivos
+
+- Deduzir intervalos de confiança  
+- Aplicar em R  
+- Interpretar resultados  
+- Relacionar com estimadores pontuais  
+
+---
+
+# 📚 Fundamentação Teórica
+
+## 🔹 Intervalo para média (variância conhecida)
+
+Baseado na normal:
+
+$$
+\bar{x} \pm z_{\alpha/2} \frac{\sigma}{\sqrt{n}}
+$$
+
+---
+
+## 🔹 Intervalo para variância
+
+$$
+\frac{(n-1)s^2}{\chi^2} < \sigma^2 < \frac{(n-1)s^2}{\chi^2}
+$$
+
+---
+
+## 🔹 Diferença entre médias (homocedástico)
+
+$$
+(\bar{x}_1 - \bar{x}_2) \pm t \cdot S_p
+$$
+
+---
+
+## 🔹 Diferença entre médias (heterocedástico)
+
+$$
+(\bar{x}_1 - \bar{x}_2) \pm t \cdot \sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}
+$$
+
+---
+
+## 🔹 Razão entre variâncias
+
+$$
+\frac{s_1^2}{s_2^2} \sim F
+$$
+
+---
+
+## 🔹 Bernoulli (proporção)
+
+$$
+\hat{p} \pm z \sqrt{\frac{p(1-p)}{n}}
+$$
+
+---
+
+# 🔗 Relação com Relatório 06
+
+Os intervalos de confiança são uma extensão dos estimadores pontuais, fornecendo uma faixa de valores plausíveis para o parâmetro.
+
+---
+
+# ⚙️ Simulação no R
+
+```{r}
+set.seed(10)
+
+dados <- rnorm(50, 100, 10)
+
+mean(dados)
+sd(dados)
+
+```
+
+# Intervalo para média
+```{r}
+n <- length(dados)
+media <- mean(dados)
+sigma <- sd(dados)
+
+erro <- qnorm(0.975) * sigma/sqrt(n)
+
+c(media - erro, media + erro)
+
+
+```
+
+## Intervalo para variância
+
+```{r}
+
+var(dados)
+
+qchisq(c(0.025, 0.975), df=n-1)
+
+```
+
+## Duas populações
+```{r}
+x1 <- rnorm(30, 100, 10)
+x2 <- rnorm(30, 95, 12)
+
+t.test(x1, x2, var.equal = TRUE)
+t.test(x1, x2, var.equal = FALSE)
+
+```
+
+## Razão de variâncias
+```{r}
+var.test(x1, x2)
+
+```
+
+## Bernoulli
+```{r}
+dados_bin <- rbinom(50, 1, 0.6)
+
+p_hat <- mean(dados_bin)
+
+erro <- qnorm(0.975)*sqrt(p_hat*(1-p_hat)/50)
+
+c(p_hat - erro, p_hat + erro)
+
+```
+
+# Resultados e Discussões
+
+- Os intervalos obtidos fornecem uma estimativa da incerteza associada aos parâmetros populacionais.
+
+- A diferença entre variâncias iguais e diferentes impacta diretamente o intervalo.
+
+# Aplicação em Telecom
+
+- Qualidade de transmissão
+- Taxa de erro
+- Latência média
+
+- Os intervalos permitem estimar desempenho com confiabilidade.
+
+# Conclusão
+
+- Os estimadores intervalares são fundamentais para análise estatística, permitindo inferências mais robustas que estimativas pontuais.
+
+# Referências
+
+Referências
+
+- Vídeo aulas do professor da disciplina de Estatística e Probabilidade, Ben Dêivide.
+
+- Canal: [https://www.youtube.com/@bendeivide/videos]
