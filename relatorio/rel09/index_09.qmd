@@ -1,0 +1,278 @@
+---
+# Só mude aqui!!!!
+author: "Vitor Theodoro Oliveira Viana"
+title: "Relatório de Aula Prática 09 - Regressão Linear"
+bibliography: referencias.bib
+# A partir daqui nao faca alteracoes!!!!!
+link-citations: true
+csl: associacao-brasileira-de-normas-tecnicas-ipea.csl
+subtitle: "Estatística e Probabilidade"
+include-before-body: header.html
+date: now
+date-format: "DD/MM/YYYY, HH:mm"
+lang: pt-BR
+format:
+  html:
+    toc: true
+    number-sections: true
+    theme: bootstrap
+    code-fold: true
+    code-tools: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## 📌 Introdução
+
+A regressão linear é uma das ferramentas mais importantes da inferência estatística, permitindo modelar e quantificar a relação entre uma variável resposta ($Y$) e uma ou mais variáveis explicativas ($X$). Neste relatório, é desenvolvido um estudo de regressão linear aplicado a um experimento prático de catapulta, no qual se deseja verificar se existe associação entre o ângulo de lançamento (variável $B^+$) e a distância percorrida pela bolinha arremessada.
+
+---
+
+## 🎯 Objetivos
+
+- Ajustar um modelo de regressão linear simples aos dados do experimento
+- Testar a significância estatística do modelo ajustado
+- Interpretar o coeficiente de determinação ($R^2$)
+- Avaliar a adequação do modelo por meio da análise de resíduos
+- Relacionar os resultados obtidos com os estimadores intervalares do Relatório 07
+
+---
+
+# 📚 Fundamentação Teórica
+
+## 🔹 Modelo de regressão linear simples
+
+$$
+Y_i = \beta_0 + \beta_1 X_i + \varepsilon_i, \qquad \varepsilon_i \sim N(0, \sigma^2)
+$$
+
+em que $Y_i$ é a distância percorrida pela bolinha, $X_i$ é o ângulo de lançamento, $\beta_0$ e $\beta_1$ são os parâmetros do modelo e $\varepsilon_i$ é o erro aleatório.
+
+---
+
+## 🔹 Estimadores de mínimos quadrados
+
+$$
+\hat{\beta}_1 = \frac{\sum (X_i - \bar{X})(Y_i - \bar{Y})}{\sum (X_i - \bar{X})^2} \qquad \hat{\beta}_0 = \bar{Y} - \hat{\beta}_1 \bar{X}
+$$
+
+---
+
+## 🔹 Coeficiente de determinação ($R^2$)
+
+$$
+R^2 = \frac{SQReg}{SQTotal} = 1 - \frac{SQRes}{SQTotal}
+$$
+
+---
+
+## 🔹 Teste de significância dos parâmetros (Teste t)
+
+$$
+H_0: \beta_1 = 0 \qquad H_1: \beta_1 \neq 0
+$$
+
+$$
+t = \frac{\hat{\beta}_1}{SE(\hat{\beta}_1)} \sim t_{(n-2)}
+$$
+
+---
+
+## 🔹 Análise de variância da regressão (Teste F)
+
+$$
+F = \frac{SQReg / 1}{SQRes / (n-2)} \sim F_{(1, \, n-2)}
+$$
+
+---
+
+## 🔹 Pressupostos do modelo
+
+- Linearidade da relação entre $X$ e $Y$
+- Normalidade dos resíduos
+- Homocedasticidade (variância constante dos resíduos)
+- Independência dos erros
+
+---
+
+# 🔗 Relação com o Relatório 07
+
+Os intervalos de confiança estudados no Relatório 07 estão diretamente ligados à regressão linear: os coeficientes $\hat{\beta}_0$ e $\hat{\beta}_1$, assim como a variância dos resíduos, possuem seus próprios intervalos de confiança, construídos a partir da distribuição *t* de Student, permitindo quantificar a incerteza associada às estimativas do modelo.
+
+---
+
+# 🧪 Descrição do Experimento
+
+**Objetivo:** estudar a distância percorrida pela bolinha arremessada pela catapulta em função do ângulo de lançamento.
+
+- **Combinação do grupo:** $O^-$ (Nível III), $A^+$ (Nível III), $A^-$ (Nível IV)
+- **Variável $X$:** ângulo de lançamento $B^+$ (9 níveis: 90° a 170°, de 10 em 10 graus)
+- **Variável $Y$:** distância percorrida pela bolinha (metros)
+- **Amostra:** $n = 18$, sendo 2 arremessos para cada um dos 9 ângulos
+- **Data da coleta:** 22/06/2026, das 16h às 17h
+
+**Perguntas a serem respondidas:**
+
+1. Existe associação entre a distância percorrida pela bolinha e o ângulo escolhido na variável $B^+$ na catapulta?
+2. Qual a forma dessa associação (modelo de regressão)?
+3. Qual o nível de significância?
+4. Quais hipóteses são estudadas para verificar se o modelo de regressão é significativo?
+5. O modelo de regressão encontrado é adequado para explicar a relação entre as variáveis envolvidas?
+6. Apresente o gráfico de regressão linear
+
+---
+
+# 📊 Dados Coletados
+
+Os dados abaixo foram coletados em centímetros e convertidos para metros para a análise.
+
+```{r}
+angulo <- rep(seq(170, 90, by = -10), each = 2)
+
+distancia_cm <- c(21, 47,
+                   106, 105,
+                   159, 174,
+                   234, 233,
+                   279, 277,
+                   290, 313,
+                   295, 295.5,
+                   306, 305,
+                   292, 277)
+
+dados <- data.frame(
+  angulo = angulo,
+  distancia_cm = distancia_cm,
+  distancia_m = distancia_cm / 100
+)
+
+dados
+```
+
+---
+
+# ⚙️ Análise Exploratória no R
+
+```{r}
+library(ggplot2)
+
+summary(dados$distancia_m)
+
+ggplot(dados, aes(x = angulo, y = distancia_m)) +
+  geom_point(size = 3, color = "steelblue") +
+  labs(title = "Distância percorrida em função do ângulo de lançamento",
+       x = "Ângulo (graus)", y = "Distância (m)") +
+  theme_minimal()
+```
+
+O gráfico de dispersão sugere que a distância cresce à medida que o ângulo diminui de 170° até aproximadamente 100°-110°, estabilizando-se (e caindo levemente) próximo de 90°, o que indica um possível comportamento não estritamente linear (curvatura) ao longo de toda a amplitude estudada.
+
+---
+
+# 📈 Ajuste do Modelo de Regressão Linear Simples
+
+```{r}
+modelo_linear <- lm(distancia_m ~ angulo, data = dados)
+summary(modelo_linear)
+```
+
+## Análise de variância (Teste F)
+
+```{r}
+anova(modelo_linear)
+```
+
+## Intervalos de confiança para os coeficientes
+
+```{r}
+confint(modelo_linear)
+```
+
+## Gráfico de regressão linear
+
+```{r}
+ggplot(dados, aes(x = angulo, y = distancia_m)) +
+  geom_point(size = 3, color = "steelblue") +
+  geom_smooth(method = "lm", se = TRUE, color = "firebrick") +
+  labs(title = "Regressão linear: distância x ângulo",
+       x = "Ângulo (graus)", y = "Distância (m)") +
+  theme_minimal()
+```
+
+---
+
+# 🔍 Diagnóstico do Modelo (Análise de Resíduos)
+
+```{r}
+par(mfrow = c(2, 2))
+plot(modelo_linear)
+par(mfrow = c(1, 1))
+```
+
+```{r}
+shapiro.test(residuals(modelo_linear))
+```
+
+Os gráficos de resíduos e o teste de normalidade permitem avaliar se os pressupostos de linearidade, homocedasticidade e normalidade estão sendo atendidos pelo modelo linear simples.
+
+---
+
+# 📐 Modelo Alternativo: Regressão Quadrática
+
+Como a relação entre ângulo e distância parece apresentar curvatura (comportamento de máximo em torno de 100°-110°), ajusta-se também um modelo quadrático para efeito de comparação.
+
+```{r}
+modelo_quad <- lm(distancia_m ~ angulo + I(angulo^2), data = dados)
+summary(modelo_quad)
+```
+
+```{r}
+anova(modelo_linear, modelo_quad)
+```
+
+```{r}
+ggplot(dados, aes(x = angulo, y = distancia_m)) +
+  geom_point(size = 3, color = "steelblue") +
+  geom_smooth(method = "lm", formula = y ~ x + I(x^2), se = TRUE, color = "darkgreen") +
+  labs(title = "Modelo quadrático: distância x ângulo",
+       x = "Ângulo (graus)", y = "Distância (m)") +
+  theme_minimal()
+```
+
+---
+
+# 📝 Resultados e Discussões
+
+1. **Existe associação?** Sim. O teste F da regressão linear simples (ver ANOVA acima) indica associação estatisticamente significativa entre o ângulo e a distância percorrida, o que também é confirmado pelo teste *t* do coeficiente angular $\hat{\beta}_1$.
+
+2. **Qual a forma dessa associação?** A análise gráfica e o comparativo entre o modelo linear e o modelo quadrático (teste F comparando os dois modelos) indicam se a relação é melhor descrita por uma reta ou por uma curva (parábola), já que a distância cresce e depois se estabiliza/decresce dentro da amplitude de ângulos testada.
+
+3. **Nível de significância:** adotado $\alpha = 0{,}05$ em todos os testes de hipótese.
+
+4. **Hipóteses estudadas:** $H_0: \beta_1 = 0$ contra $H_1: \beta_1 \neq 0$ (teste *t*), equivalente ao teste $F$ da ANOVA da regressão, que testa a significância conjunta do modelo.
+
+5. **O modelo é adequado?** A adequação é avaliada pelo $R^2$, pela análise gráfica dos resíduos (linearidade, homocedasticidade) e pelo teste de normalidade dos resíduos (Shapiro-Wilk). Caso os resíduos do modelo linear simples apresentem padrão sistemático (curvatura), o modelo quadrático torna-se mais adequado para representar a relação entre as variáveis.
+
+6. **Gráfico de regressão:** apresentado nas seções anteriores (modelo linear e modelo quadrático).
+
+---
+
+# 📡 Aplicação em Telecom
+
+- Modelagem da relação entre parâmetros de configuração de um sistema (ex.: ângulo de antena, potência de transmissão) e uma métrica de desempenho (ex.: alcance do sinal, taxa de erro)
+- Uso da regressão para prever o desempenho de um sistema a partir de variáveis controláveis
+- Identificação de pontos ótimos de operação (por exemplo, o ângulo que maximiza o alcance do sinal), de forma análoga ao ângulo que maximiza a distância percorrida pela bolinha na catapulta
+
+---
+
+# 🏁 Conclusão
+
+A regressão linear se mostrou uma ferramenta adequada para investigar a relação entre o ângulo de lançamento e a distância percorrida pela bolinha no experimento da catapulta. Os testes de hipótese realizados permitiram concluir sobre a significância estatística do modelo, enquanto a análise de resíduos e a comparação com o modelo quadrático possibilitaram avaliar a real adequação da forma funcional escolhida para descrever os dados.
+
+---
+
+# Referências
+
+- Vídeo aulas do professor da disciplina de Estatística e Probabilidade, Ben Dêivide.
+- Canal: [https://www.youtube.com/@bendeivide/videos](https://www.youtube.com/@bendeivide/videos)
