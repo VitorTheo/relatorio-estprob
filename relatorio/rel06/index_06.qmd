@@ -1,0 +1,250 @@
+---
+# Só mude aqui!!!!
+author: "Vitor Theodoro Oliveira Viana"
+title: "Relatório de Aula Prática 6 - Distribuições F e Qui-quadrado: Relação com Distribuições Amostrais"
+bibliography: referencias.bib
+# A partir daqui nao faca alteracoes!!!!!
+link-citations: true
+csl: associacao-brasileira-de-normas-tecnicas-ipea.csl
+subtitle: "Estatística e Probabilidade"
+include-before-body: header.html
+date: now
+date-format: "DD/MM/YYYY, HH:mm"
+lang: pt-BR
+format:
+  html:
+    toc: true
+    number-sections: true
+    theme: bootstrap
+    code-fold: true
+    code-tools: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## 📌 Introdução
+
+Nos relatórios anteriores, exploramos como distribuições discretas (Binomial e Poisson) se aproximam da Normal quando seus parâmetros crescem. Neste relatório mudamos de foco: partimos diretamente de uma população **Normal** e perguntamos o que acontece quando manipulamos suas amostras — somando quadrados de variáveis padronizadas, ou tomando razões entre variâncias amostrais.
+
+Essas manipulações não são arbitrárias: elas nascem naturalmente do processo de estimar parâmetros populacionais (como $\sigma^2$) a partir de amostras finitas. Duas distribuições surgem desse processo e são centrais em inferência estatística: a **Qui-quadrado ($\chi^2$)**, ligada à variabilidade de uma única amostra normal, e a **F**, ligada à comparação da variabilidade entre duas amostras normais independentes. Neste relatório, reconstruímos de onde vêm essas distribuições, mostramos como se relacionam com funções de amostras normais, e comprovamos isso na prática com simulações no R.
+
+---
+
+## 🎯 Objetivo
+
+Discorrer sobre as distribuições F e Qui-quadrado. Apresentar como elas podem estar relacionadas a distribuições amostrais, quais funções de amostra se relacionam com elas, e por fim apresentar aplicações dessas distribuições na área de Engenharia de Telecomunicações.
+
+---
+
+# 📚 Fundamentação Teórica
+
+## 🔹 Ponto de partida: por que essas distribuições aparecem?
+
+Quando trabalhamos com uma amostra $X_1, \dots, X_n$ retirada de uma população $X \sim N(\mu, \sigma^2)$, dois problemas práticos surgem imediatamente: (i) como se comporta a variabilidade da amostra em torno da variância populacional? e (ii) como comparar a variabilidade de **duas** amostras normais independentes? A resposta ao primeiro problema leva à distribuição Qui-quadrado; a resposta ao segundo, à distribuição F. Ambas nascem de somas e razões de variáveis normais padronizadas ao quadrado — por isso estão tão profundamente ligadas entre si (e à própria Normal).
+
+## 🔹 Distribuição Qui-quadrado ($\chi^2$)
+
+### Definição a partir de normais padrão
+
+Se $Z_1, Z_2, \dots, Z_k$ são variáveis i.i.d. com $Z_i \sim N(0,1)$, define-se:
+
+$$
+U = \sum_{i=1}^{k} Z_i^2 \;\sim\; \chi^2_k
+$$
+
+ou seja, a Qui-quadrado com $k$ graus de liberdade é, por definição, a soma de $k$ normais padrão ao quadrado. Sua densidade é dada por:
+
+$$
+f_U(u) = \frac{1}{2^{k/2}\,\Gamma(k/2)}\, u^{\frac{k}{2}-1} e^{-u/2}, \qquad u > 0
+$$
+
+com $E[U] = k$ e $\text{Var}(U) = 2k$. Repare que, como $U$ é soma de $k$ variáveis i.i.d. com variância finita, o **Teorema Central do Limite** garante que, para $k$ grande, $\chi^2_k$ se aproxima de uma Normal — mais um elo com os relatórios anteriores.
+
+### Relação com a variância amostral de uma população normal
+
+Seja $X_1, \dots, X_n$ uma amostra de $X \sim N(\mu, \sigma^2)$, com média amostral $\bar{X}$ e variância amostral $S^2 = \dfrac{1}{n-1}\sum_{i=1}^n (X_i - \bar{X})^2$. Um resultado central da inferência estatística mostra que:
+
+$$
+W = \frac{(n-1)S^2}{\sigma^2} \;\sim\; \chi^2_{n-1}
+$$
+
+A intuição: cada termo $(X_i - \bar{X})/\sigma$ se comporta como uma normal padrão, mas como os $n$ desvios têm a restrição $\sum (X_i - \bar{X}) = 0$, perdemos **um** grau de liberdade — daí $n-1$ e não $n$. Essa é a função de amostra que relaciona diretamente $S^2$ à distribuição Qui-quadrado, e é a base para construir intervalos de confiança e testes de hipótese sobre $\sigma^2$.
+
+## 🔹 Distribuição F
+
+### Definição a partir de duas Qui-quadrado independentes
+
+Sejam $U \sim \chi^2_{d_1}$ e $V \sim \chi^2_{d_2}$ variáveis independentes. Define-se:
+
+$$
+F = \frac{U/d_1}{V/d_2} \;\sim\; F_{d_1,\,d_2}
+$$
+
+Ou seja, a distribuição F é a razão entre duas Qui-quadrado independentes, cada uma normalizada por seus graus de liberdade. Sua densidade tem forma fechada em termos da função Beta, mas o que importa aqui é a origem: **F nasce de uma razão entre duas somas de quadrados de normais**, o que a torna a ferramenta natural para comparar variabilidades.
+
+### Relação com a razão de variâncias amostrais de duas populações normais independentes
+
+Sejam duas populações independentes $X \sim N(\mu_1, \sigma_1^2)$ e $Y \sim N(\mu_2, \sigma_2^2)$, das quais retiramos amostras de tamanhos $n_1$ e $n_2$, com variâncias amostrais $S_1^2$ e $S_2^2$. Pelo resultado da seção anterior:
+
+$$
+\frac{(n_1-1)S_1^2}{\sigma_1^2} \sim \chi^2_{n_1-1}, \qquad \frac{(n_2-1)S_2^2}{\sigma_2^2} \sim \chi^2_{n_2-1}
+$$
+
+e, como as amostras são independentes, essas duas Qui-quadrado também são independentes. Aplicando a definição de F:
+
+$$
+F = \frac{\dfrac{(n_1-1)S_1^2/\sigma_1^2}{n_1-1}}{\dfrac{(n_2-1)S_2^2/\sigma_2^2}{n_2-1}} = \frac{S_1^2/\sigma_1^2}{S_2^2/\sigma_2^2} \;\sim\; F_{n_1-1,\; n_2-1}
+$$
+
+Esse é o resultado-chave: a razão entre as variâncias amostrais de duas populações normais independentes, ponderada pelas variâncias populacionais, segue exatamente uma distribuição F. Quando testamos a hipótese $H_0: \sigma_1^2 = \sigma_2^2$, os termos $\sigma_1^2$ e $\sigma_2^2$ se cancelam e a estatística de teste se reduz simplesmente a $F = S_1^2/S_2^2$.
+
+### Elo entre F, Qui-quadrado e t de Student
+
+Vale registrar um elo adicional: se $Y \sim N(0,1)$ e $U \sim \chi^2_r$ são independentes, então $T = Y/\sqrt{U/r} \sim t_r$. Elevando $T$ ao quadrado:
+
+$$
+T^2 = \frac{Y^2}{U/r} \;\sim\; F_{1,\,r}
+$$
+
+pois $Y^2 \sim \chi^2_1$. Ou seja, o quadrado de uma t de Student com $r$ graus de liberdade é uma F com $1$ e $r$ graus de liberdade — as três distribuições (Normal, $\chi^2$, $t$ e F) formam uma família interligada, todas derivadas de combinações de normais padrão.
+
+---
+
+# ⚙️ Demonstração Prática no R
+
+## Verificando a distribuição Qui-quadrado a partir da variância amostral
+
+```{r}
+library(ggplot2)
+
+set.seed(42)
+n <- 15
+sigma2 <- 4
+n_sim <- 20000
+
+# Gera n_sim amostras de tamanho n de uma N(0, sigma2) e calcula (n-1)*S^2/sigma2
+W_sim <- replicate(n_sim, {
+  amostra <- rnorm(n, mean = 0, sd = sqrt(sigma2))
+  s2 <- var(amostra)
+  (n - 1) * s2 / sigma2
+})
+
+dados_chisq <- data.frame(W = W_sim)
+
+ggplot(dados_chisq, aes(x = W)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 50, fill = "steelblue", alpha = 0.6) +
+  stat_function(fun = dchisq, args = list(df = n - 1), color = "firebrick", linewidth = 1) +
+  labs(title = paste0("Distribuição simulada de (n-1)S²/σ² vs Qui-quadrado(", n - 1, ")"),
+       x = "W", y = "Densidade") +
+  theme_minimal()
+```
+
+## Comparando probabilidades exatas x simuladas (Qui-quadrado)
+
+```{r}
+w_ref <- 20
+
+p_teorica <- pchisq(w_ref, df = n - 1)
+p_simulada <- mean(W_sim <= w_ref)
+
+data.frame(
+  Metodo = c("Qui-quadrado teórica", "Proporção simulada"),
+  `P(W <= 20)` = c(p_teorica, p_simulada)
+)
+```
+
+## Verificando a distribuição F a partir da razão de variâncias amostrais
+
+```{r}
+n1 <- 10
+n2 <- 12
+sigma1_2 <- 4
+sigma2_2 <- 9
+
+F_sim <- replicate(n_sim, {
+  amostra1 <- rnorm(n1, mean = 0, sd = sqrt(sigma1_2))
+  amostra2 <- rnorm(n2, mean = 0, sd = sqrt(sigma2_2))
+  (var(amostra1) / sigma1_2) / (var(amostra2) / sigma2_2)
+})
+
+dados_F <- data.frame(F = F_sim)
+
+ggplot(dados_F, aes(x = F)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 60, fill = "seagreen", alpha = 0.6) +
+  stat_function(fun = df, args = list(df1 = n1 - 1, df2 = n2 - 1), color = "firebrick", linewidth = 1) +
+  xlim(0, 6) +
+  labs(title = paste0("Razão de variâncias amostrais vs F(", n1 - 1, ", ", n2 - 1, ")"),
+       x = "F", y = "Densidade") +
+  theme_minimal()
+```
+
+## Comparando probabilidades exatas x simuladas (F)
+
+```{r}
+f_ref <- 2.5
+
+p_teorica_F <- pf(f_ref, df1 = n1 - 1, df2 = n2 - 1)
+p_simulada_F <- mean(F_sim <= f_ref)
+
+data.frame(
+  Metodo = c("F teórica", "Proporção simulada"),
+  `P(F <= 2.5)` = c(p_teorica_F, p_simulada_F)
+)
+```
+
+## Verificando o elo $T^2 \sim F_{1,r}$
+
+```{r}
+r <- 8
+
+T_sim <- replicate(n_sim, {
+  y <- rnorm(1)
+  u <- rchisq(1, df = r)
+  y / sqrt(u / r)
+})
+
+T2_sim <- T_sim^2
+
+dados_t2 <- data.frame(T2 = T2_sim)
+
+ggplot(dados_t2, aes(x = T2)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 60, fill = "orchid", alpha = 0.6) +
+  stat_function(fun = df, args = list(df1 = 1, df2 = r), color = "firebrick", linewidth = 1) +
+  xlim(0, 10) +
+  labs(title = paste0("T² (T ~ t", r, ") vs F(1, ", r, ")"),
+       x = "T²", y = "Densidade") +
+  theme_minimal()
+```
+
+---
+
+# 📝 Resultados e Discussões
+
+- A simulação confirma que $(n-1)S^2/\sigma^2$, construída a partir de amostras normais, segue de fato uma $\chi^2_{n-1}$: o histograma simulado se ajusta muito bem à densidade teórica, e as probabilidades acumuladas exata e simulada ficaram próximas.
+- A simulação da razão $\dfrac{S_1^2/\sigma_1^2}{S_2^2/\sigma_2^2}$ confirma que essa estatística, construída a partir de duas amostras normais independentes, segue exatamente uma $F_{n_1-1,\,n_2-1}$, validando o resultado teórico derivado a partir da definição de F como razão de Qui-quadrados independentes.
+- A verificação de $T^2 \sim F_{1,r}$ evidencia empiricamente o elo entre as distribuições t, Qui-quadrado e F: todas emergem de combinações de variáveis normais padrão, e por isso compartilham propriedades e permitem transitar de um teste estatístico para outro.
+- Em todos os casos, a proximidade entre proporções simuladas e probabilidades teóricas reforça que essas distribuições descrevem corretamente o comportamento de funções de amostras normais, mesmo para tamanhos amostrais moderados.
+
+---
+
+# 📡 Aplicação em Telecom
+
+- **Teste de igualdade de variâncias de ruído (teste F):** ao comparar o ruído térmico ou a variabilidade de potência do sinal entre dois canais, dois links ou dois equipamentos, calcula-se $F = S_1^2/S_2^2$ a partir de amostras de ruído; comparando com a distribuição $F_{n_1-1,\,n_2-1}$, decide-se estatisticamente se um canal é significativamente mais ruidoso que o outro.
+- **Intervalos de confiança para a variância do ruído (Qui-quadrado):** a partir de uma amostra de medições de ruído de um canal, usa-se $(n-1)S^2/\sigma^2 \sim \chi^2_{n-1}$ para construir intervalos de confiança para a variância populacional do ruído — essencial para dimensionar margens de segurança em sistemas de transmissão.
+- **Controle de qualidade e homologação de equipamentos:** ao validar se um novo transceptor mantém a mesma variabilidade de jitter ou de erro de fase que um modelo já homologado, o teste F sobre as variâncias amostradas em bancada permite uma decisão objetiva antes da liberação para produção.
+- **Monitoramento de estabilidade de rede ao longo do tempo:** comparando a variância da latência (ou do throughput) em duas janelas de tempo distintas de uma mesma rede, o teste F indica se houve mudança significativa na variabilidade do desempenho, sinalizando possível degradação ou necessidade de replanejamento de capacidade.
+
+---
+
+# 🏁 Conclusão
+
+As distribuições Qui-quadrado e F não são construções isoladas: ambas emergem diretamente de combinações de variáveis normais padrão — a primeira como soma de quadrados, a segunda como razão entre duas dessas somas. Mostramos que a Qui-quadrado se relaciona naturalmente com a variância amostral de uma única população normal, enquanto a F se relaciona com a razão de variâncias amostrais de duas populações normais independentes, resultado que se torna evidente ao substituir a definição de cada Qui-quadrado na razão que define F. As simulações no R confirmaram numérica e visualmente essas relações, incluindo o elo adicional entre a distribuição t ao quadrado e a F com 1 grau de liberdade no numerador. Compreender essas distribuições permite tomar decisões estatisticamente embasadas em Engenharia de Telecomunicações, como comparar a variabilidade de ruído entre canais, construir intervalos de confiança para variâncias e monitorar a estabilidade de redes ao longo do tempo.
+
+---
+
+# Referências
+
+- Vídeo aulas do professor da disciplina de Estatística e Probabilidade, Ben Dêivide.
+- Canal: [https://www.youtube.com/@bendeivide/videos](https://www.youtube.com/@bendeivide/videos)

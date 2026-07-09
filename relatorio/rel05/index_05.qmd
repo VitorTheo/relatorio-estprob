@@ -1,0 +1,278 @@
+---
+# Só mude aqui!!!!
+author: "Vitor Theodoro Oliveira Viana"
+title: "Relatório de Aula Prática 10 - Aproximação Normal das Distribuições Binomial e Poisson"
+bibliography: referencias.bib
+# A partir daqui nao faca alteracoes!!!!!
+link-citations: true
+csl: associacao-brasileira-de-normas-tecnicas-ipea.csl
+subtitle: "Estatística e Probabilidade"
+include-before-body: header.html
+date: now
+date-format: "DD/MM/YYYY, HH:mm"
+lang: pt-BR
+format:
+  html:
+    toc: true
+    number-sections: true
+    theme: bootstrap
+    code-fold: true
+    code-tools: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## 📌 Introdução
+
+Ao longo dos relatórios anteriores, trabalhamos com três distribuições que, à primeira vista, parecem bem diferentes entre si: a Binomial, que conta sucessos em um número fixo de tentativas; a Poisson, que conta ocorrências de eventos raros ao longo de um intervalo de tempo ou espaço; e a Normal, contínua, simétrica, usada para modelar praticamente tudo o que sofre a soma de muitos pequenos efeitos aleatórios.
+
+A pergunta que motiva este relatório é: por que, na prática, tantas vezes usamos a Normal para *aproximar* probabilidades de variáveis Binomiais e Poisson, que são discretas? A resposta não é coincidência nem "truque de calculadora" — ela decorre diretamente da estrutura matemática dessas distribuições. Neste relatório, reconstruímos esse raciocínio passo a passo: partimos da definição de cada distribuição, mostramos por que a Normal aparece como limite natural quando os parâmetros crescem, e comprovamos isso na prática com simulações no R.
+
+---
+
+## 🎯 Objetivo
+
+Discorrer sobre como as distribuições Binomial e Poisson podem ser aproximadas à distribuição Normal. Apresentar as demonstrações devidas, bem como aplicações de como utilizá-las.
+
+---
+
+# 📚 Fundamentação Teórica
+
+## 🔹 Ponto de partida: por que aproximar por uma Normal?
+
+Tanto a Binomial quanto a Poisson são distribuições discretas cujas probabilidades exatas exigem cálculos com fatoriais — $\binom{n}{k}$ na Binomial e $e^{-\lambda}\lambda^k/k!$ na Poisson. Quando $n$ (ou $\lambda$) cresce, esses cálculos ficam computacionalmente pesados e numericamente instáveis (fatoriais de números grandes). A ideia da aproximação normal é substituir esses cálculos exatos por uma distribuição contínua, fácil de tabelar, sem perder precisão relevante — desde que certas condições sejam satisfeitas.
+
+## 🔹 Aproximação Normal da Binomial (Teorema de De Moivre-Laplace)
+
+### A ideia por trás da demonstração
+
+Seja $X \sim Binomial(n, p)$. Podemos escrever $X$ como uma soma de $n$ variáveis independentes e identicamente distribuídas:
+
+$$
+X = \sum_{i=1}^{n} Y_i, \qquad Y_i \sim Bernoulli(p)
+$$
+
+Cada $Y_i$ tem média $p$ e variância $p(1-p)$. Como $X$ é uma soma de $n$ variáveis i.i.d. com variância finita, o **Teorema Central do Limite (TCL)** garante que, quando $n \to \infty$:
+
+$$
+Z = \frac{X - np}{\sqrt{np(1-p)}} \;\xrightarrow{d}\; N(0,1)
+$$
+
+ou seja, $X$ se comporta aproximadamente como uma $N\big(np,\; np(1-p)\big)$ para $n$ suficientemente grande.
+
+### Confirmando via a fórmula exata (Stirling)
+
+O TCL já basta para justificar a aproximação, mas historicamente De Moivre chegou a esse resultado antes mesmo do TCL ser formalizado, trabalhando diretamente a fórmula da Binomial. Vale a pena reconstruir essa ideia porque ela mostra *de onde* vem o formato de sino.
+
+Partindo de:
+
+$$
+P(X=k) = \binom{n}{k} p^k (1-p)^{n-k}
+$$
+
+e aplicando a aproximação de Stirling para o fatorial,
+
+$$
+n! \approx \sqrt{2\pi n}\left(\frac{n}{e}\right)^n
+$$
+
+em $\binom{n}{k} = \dfrac{n!}{k!(n-k)!}$, e reorganizando os termos em função do desvio padronizado $z = \dfrac{k-np}{\sqrt{np(1-p)}}$, chega-se a:
+
+$$
+P(X=k) \approx \frac{1}{\sqrt{2\pi np(1-p)}} \, e^{-\frac{(k-np)^2}{2np(1-p)}}
+$$
+
+que é exatamente a densidade de uma $N\big(np, np(1-p)\big)$ avaliada em $k$. Ou seja, o "sino" da Normal não é imposto arbitrariamente — ele emerge naturalmente da própria fórmula da Binomial quando $n$ cresce.
+
+### Condição prática de uso e correção de continuidade
+
+Como regra prática, a aproximação é considerada satisfatória quando:
+
+$$
+np \geq 5 \qquad \text{e} \qquad n(1-p) \geq 5
+$$
+
+Como estamos aproximando uma variável **discreta** por uma **contínua**, usa-se a **correção de continuidade**, tratando cada valor inteiro $k$ como um intervalo $[k-0{,}5,\; k+0{,}5]$:
+
+$$
+P(X \leq k) \approx P\!\left(Z \leq \frac{k+0{,}5-np}{\sqrt{np(1-p)}}\right)
+$$
+
+---
+
+## 🔹 Aproximação Normal da Poisson
+
+### Caminho 1: Poisson como soma de Poissons
+
+Uma propriedade importante da Poisson é a **aditividade**: se $W_1, \dots, W_n$ são variáveis i.i.d. com $W_i \sim Poisson(1)$, então:
+
+$$
+S_n = \sum_{i=1}^{n} W_i \;\sim\; Poisson(n)
+$$
+
+Como $S_n$ é soma de $n$ variáveis i.i.d. com média e variância finitas (média $=$ variância $=1$ para cada $W_i$), o TCL se aplica novamente:
+
+$$
+\frac{S_n - n}{\sqrt{n}} \;\xrightarrow{d}\; N(0,1)
+$$
+
+Fazendo $\lambda = n$, isso significa que, para $\lambda$ grande:
+
+$$
+X \sim Poisson(\lambda) \quad\Longrightarrow\quad X \approx N(\lambda, \lambda)
+$$
+
+Repare que essa é uma propriedade elegante da Poisson: **média e variância são iguais a $\lambda$**, e é justamente esse $\lambda$ que aparece nos dois parâmetros da Normal aproximadora.
+
+### Caminho 2: via função geradora de momentos (justificativa complementar)
+
+Outra forma de enxergar o mesmo resultado é observar a função geradora de cumulantes da Poisson:
+
+$$
+\ln M_X(t) = \lambda(e^t - 1)
+$$
+
+Expandindo em série de Taylor em torno de $t=0$, os cumulantes de ordem $r$ da Poisson são todos iguais a $\lambda$. A *assimetria* (terceiro cumulante padronizado) vale $1/\sqrt{\lambda}$, e a *curtose* padronizada vale $1/\lambda$ — ambas tendem a zero quando $\lambda \to \infty$. Isso confirma, por outro caminho, que a forma da distribuição perde assimetria e excesso de curtose à medida que $\lambda$ cresce, aproximando-se cada vez mais do formato Normal.
+
+### Condição prática de uso
+
+Como regra prática, costuma-se considerar a aproximação adequada quando:
+
+$$
+\lambda \geq 10
+$$
+
+e, assim como na Binomial, também se aplica a correção de continuidade, já que a Poisson é discreta.
+
+---
+
+# ⚙️ Demonstração Prática no R
+
+## Aproximação da Binomial pela Normal
+
+```{r}
+library(ggplot2)
+
+n <- 100
+p <- 0.3
+
+x_vals <- 0:n
+prob_binom <- dbinom(x_vals, size = n, prob = p)
+
+media_bin <- n * p
+var_bin <- n * p * (1 - p)
+
+dados_binom <- data.frame(
+  x = x_vals,
+  Binomial = prob_binom,
+  Normal = dnorm(x_vals, mean = media_bin, sd = sqrt(var_bin))
+)
+
+ggplot(dados_binom, aes(x = x)) +
+  geom_col(aes(y = Binomial), fill = "steelblue", alpha = 0.6) +
+  geom_line(aes(y = Normal), color = "firebrick", linewidth = 1) +
+  labs(title = paste0("Binomial(n=", n, ", p=", p, ") x Normal(", media_bin, ", ", round(var_bin,1), ")"),
+       x = "k", y = "Probabilidade / Densidade") +
+  theme_minimal()
+```
+
+## Comparando probabilidades exatas x aproximadas (com correção de continuidade)
+
+```{r}
+k <- 35
+
+p_exata <- pbinom(k, size = n, prob = p)
+p_aprox <- pnorm(k + 0.5, mean = media_bin, sd = sqrt(var_bin))
+
+data.frame(
+  Metodo = c("Binomial exata", "Aproximação Normal (c/ correção)"),
+  `P(X <= 35)` = c(p_exata, p_aprox)
+)
+```
+
+## Aproximação da Poisson pela Normal
+
+```{r}
+lambda <- 20
+
+x_vals_pois <- 0:50
+prob_pois <- dpois(x_vals_pois, lambda = lambda)
+
+dados_pois <- data.frame(
+  x = x_vals_pois,
+  Poisson = prob_pois,
+  Normal = dnorm(x_vals_pois, mean = lambda, sd = sqrt(lambda))
+)
+
+ggplot(dados_pois, aes(x = x)) +
+  geom_col(aes(y = Poisson), fill = "seagreen", alpha = 0.6) +
+  geom_line(aes(y = Normal), color = "firebrick", linewidth = 1) +
+  labs(title = paste0("Poisson(lambda=", lambda, ") x Normal(", lambda, ", ", lambda, ")"),
+       x = "k", y = "Probabilidade / Densidade") +
+  theme_minimal()
+```
+
+## Comparando probabilidades exatas x aproximadas (Poisson)
+
+```{r}
+k_pois <- 25
+
+p_exata_pois <- ppois(k_pois, lambda = lambda)
+p_aprox_pois <- pnorm(k_pois + 0.5, mean = lambda, sd = sqrt(lambda))
+
+data.frame(
+  Metodo = c("Poisson exata", "Aproximação Normal (c/ correção)"),
+  `P(X <= 25)` = c(p_exata_pois, p_aprox_pois)
+)
+```
+
+## Efeito do tamanho do parâmetro na qualidade da aproximação
+
+Para reforçar visualmente por que a aproximação melhora quando $n$ (ou $\lambda$) cresce, comparamos três cenários de Poisson:
+
+```{r}
+lambdas <- c(2, 10, 50)
+
+par(mfrow = c(1, 3))
+for (l in lambdas) {
+  x_seq <- 0:(l * 3)
+  plot(x_seq, dpois(x_seq, lambda = l), type = "h", lwd = 2, col = "seagreen",
+       main = paste("Poisson(", l, ")"), xlab = "k", ylab = "P(X=k)")
+  lines(x_seq, dnorm(x_seq, mean = l, sd = sqrt(l)), col = "firebrick", lwd = 2)
+}
+par(mfrow = c(1, 1))
+```
+
+Como esperado pela teoria (assimetria proporcional a $1/\sqrt{\lambda}$), quanto maior o $\lambda$, mais simétrica e "normal" fica a forma da distribuição.
+
+---
+
+# 📝 Resultados e Discussões
+
+- A demonstração via Teorema Central do Limite mostra que tanto a Binomial (soma de Bernoullis) quanto a Poisson (soma de Poissons unitárias) convergem para a Normal simplesmente por serem somas de variáveis aleatórias independentes com variância finita — esse é o mecanismo comum por trás das duas aproximações.
+- A reconstrução via aproximação de Stirling reforça, de forma independente do TCL, que o formato de sino já está "escondido" dentro da própria fórmula combinatória da Binomial.
+- Nas simulações, tanto para a Binomial$(100; 0{,}3)$ quanto para a Poisson$(20)$, a curva Normal se ajusta muito bem ao histograma de probabilidades, e as probabilidades acumuladas calculadas de forma exata e de forma aproximada (com correção de continuidade) ficaram muito próximas.
+- O gráfico comparando $\lambda = 2, 10, 50$ evidencia empiricamente por que a regra prática ($np \geq 5$, $n(1-p)\geq 5$ para a Binomial; $\lambda \geq 10$ para a Poisson) existe: para parâmetros pequenos, a distribuição é visivelmente assimétrica e a aproximação normal falha.
+
+---
+
+# 📡 Aplicação em Telecom
+
+- **Dimensionamento de tráfego:** o número de chamadas ou pacotes recebidos por um servidor em um intervalo de tempo costuma ser modelado por Poisson; para redes com alto volume de tráfego ($\lambda$ grande), a aproximação Normal permite calcular rapidamente a probabilidade de sobrecarga sem depender de fatoriais grandes.
+- **Controle de qualidade de transmissão:** a taxa de erro de bits (BER) em um grande número de bits transmitidos pode ser tratada como uma Binomial; com $n$ grande, usa-se a aproximação Normal para construir intervalos de confiança e testes de hipótese sobre a taxa de erro.
+- **Planejamento de capacidade:** ao prever a demanda de usuários simultâneos em uma rede, a aproximação Normal simplifica o cálculo de percentis (por exemplo, "capacidade necessária para atender 95% dos picos de demanda") sem a necessidade de somar termos da Binomial ou da Poisson um a um.
+
+---
+
+# 🏁 Conclusão
+
+As aproximações Normais da Binomial e da Poisson não são atalhos arbitrários: elas decorrem diretamente da estrutura de soma de variáveis aleatórias independentes presente em ambas as distribuições, sendo formalizadas pelo Teorema Central do Limite e evidenciadas classicamente pela aproximação de Stirling, no caso da Binomial. As simulações no R confirmaram, tanto visualmente quanto numericamente, que essas aproximações são precisas sob as condições práticas usuais ($np \geq 5$ e $n(1-p) \geq 5$ para a Binomial; $\lambda \geq 10$ para a Poisson), e que a qualidade da aproximação melhora conforme os parâmetros crescem, refletindo a redução da assimetria dessas distribuições. Compreender essas aproximações permite simplificar cálculos de probabilidade em situações práticas de engenharia, como as aplicações discutidas em telecomunicações.
+
+---
+
+# Referências
+
+- Vídeo aulas do professor da disciplina de Estatística e Probabilidade, Ben Dêivide.
+- Canal: [https://www.youtube.com/@bendeivide/videos](https://www.youtube.com/@bendeivide/videos)
