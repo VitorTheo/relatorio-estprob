@@ -1,7 +1,7 @@
 ---
 # Só mude aqui!!!!
 author: "Vitor Theodoro Oliveira Viana"
-title: "Relatório de Aula Prática 10 - Aproximação Normal das Distribuições Binomial e Poisson"
+title: "Relatório de Aula Prática 5 - Aproximação Normal das Distribuições Binomial e Poisson"
 bibliography: referencias.bib
 # A partir daqui nao faca alteracoes!!!!!
 link-citations: true
